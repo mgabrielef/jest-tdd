@@ -1,4 +1,6 @@
 const {UsersController} = require('./controller')
+const {Database} = require('./database')
+const {spy, assert} = require('sinon')
 let expectedResponse
 
 describe('Users controller', () => {
@@ -23,5 +25,14 @@ describe('Users controller', () => {
         const response = controller.getAll()
 
         expect(response).toBe(expectedResponse)
+    });
+
+    it('spy', () => {
+        const findAll = spy(Database)
+
+        const controller = new UsersController(Database)
+        controller.getAll()
+
+        assert.calledWith(findAll, 'users')
     });
 });
