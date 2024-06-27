@@ -1,6 +1,6 @@
 const { UsersController } = require('./controller')
 const { Database } = require('./database')
-const { spy, stub, assert } = require('sinon')
+const { spy, stub, mock, assert } = require('sinon')
 let expectedResponse
 
 describe('Users controller', () => {
@@ -47,5 +47,19 @@ describe('Users controller', () => {
         expect(response).toEqual(expectedResponse)
         
         findAll.restore()
+    });
+
+    it('mock', () => {
+        const dbMock = mock(Database)
+        dbMock.expects('findAll').once().withArgs('users').returns(expectedResponse)
+
+        const controller = new UsersController(Database)
+        const response = controller.getAll()
+
+        expect(response).toEqual(expectedResponse)
+
+        dbMock.verify()
+        dbMock.restore()
+
     });
 });
