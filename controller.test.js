@@ -1,6 +1,6 @@
-const {UsersController} = require('./controller')
-const {Database} = require('./database')
-const {spy, assert} = require('sinon')
+const { UsersController } = require('./controller')
+const { Database } = require('./database')
+const { spy, stub, assert } = require('sinon')
 let expectedResponse
 
 describe('Users controller', () => {
@@ -28,11 +28,24 @@ describe('Users controller', () => {
     });
 
     it('spy', () => {
-        const findAll = spy(Database)
-
+        const findAll = spy(Database, 'findAll')
         const controller = new UsersController(Database)
         controller.getAll()
 
         assert.calledWith(findAll, 'users')
+        findAll.restore()
+    });
+
+    it('stub', () => {
+        const findAll= stub(Database, 'findAll')
+        findAll.withArgs('users').returns(expectedResponse)
+
+        const controller = new UsersController(Database)
+        const response = controller.getAll()
+
+        assert.calledWith(findAll, 'users')
+        expect(response).toEqual(expectedResponse)
+        
+        findAll.restore()
     });
 });
